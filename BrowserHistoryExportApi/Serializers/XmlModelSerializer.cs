@@ -11,21 +11,21 @@ namespace BrowserHistoryExportApi.Serializers
 
         public XmlModelSerializer()
         {
-            m_xmlSerializer = new XmlSerializer(typeof(ExportModel));
+            m_xmlSerializer = new XmlSerializer(typeof(HistoryCollection));
         }
 
-        public ExportModel Deserialize(string _data)
+        public HistoryCollection Deserialize(string _data)
         {
             if (string.IsNullOrWhiteSpace(_data))
                 throw new ArgumentException("Data can not be null or empty!");
             
             using (var reader = new StringReader(_data))
             {
-                return (ExportModel)m_xmlSerializer.Deserialize(reader);
+                return (HistoryCollection)m_xmlSerializer.Deserialize(reader);
             }
         }
 
-        public string Serialize(ExportModel _model)
+        public string Serialize(HistoryCollection _model)
         {
             if (_model == null)
                 throw new ArgumentNullException(nameof(_model));

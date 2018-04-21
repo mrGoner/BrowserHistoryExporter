@@ -2,7 +2,7 @@
 {
     public interface IModelSerializer
     {
-        string Serialize(ExportModel _model);
-        ExportModel Deserialize(string _data);
+        string Serialize(HistoryCollection _model);
+        HistoryCollection Deserialize(string _data);
     }
 }

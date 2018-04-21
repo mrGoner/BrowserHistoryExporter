@@ -30,15 +30,16 @@ namespace BrowserHistoryExportApi
             }
         }
 
-        public ExportModel Export(string _pathToHistory, string _exporterName, DateTime _from, DateTime _until)
+        public HistoryCollection Export(string _pathToHistory, 
+                                        string _exporterName, DateTime _from, DateTime _until)
         {
             var exporter = m_currentExporters.FirstOrDefault(_x => _x.BrowserName == _exporterName);
 
             if(exporter != null)
             {
-                var exportModel = exporter.Export(_pathToHistory, _from, _until);
+                var historyCollection = exporter.Export(_pathToHistory, _from, _until);
 
-                return exportModel;
+                return historyCollection;
             }
 
             throw new InvalidOperationException($"Could not found exporter with name: {_exporterName}");

@@ -7,11 +7,11 @@ namespace BrowserHistoryExportApi
 {
     public class ChromeExporter : IExporter
     {
-        private DateTime m_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private readonly DateTime m_epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public string BrowserName => "Chrome";
 
-        public ExportModel Export(string _pathToFile, DateTime _from, DateTime _until)
+        public HistoryCollection Export(string _pathToFile, DateTime _from, DateTime _until)
         {
             if (File.Exists(_pathToFile))
             {
@@ -21,31 +21,38 @@ namespace BrowserHistoryExportApi
 
                 var exportCommand = connection.CreateCommand();
                 exportCommand.CommandText = 
-                    $"Select url, title from urls " +
-                    "where last_visit_time >= $dateFrom and last_visit_time <= $dateUntil";
+                    $"select date, url, title from " +
+                    "(select datetime(last_visit_time/1000000-11644473600,'unixepoch') 'date', " +
+                    "url, title from urls) " +
+                    "where date > datetime($dateFrom, 'unixepoch') " +
+                    "and date > datetime($dateUntil, 'unixepoch') order by date";
+                
                 exportCommand.Parameters.AddWithValue("$dateFrom", DateTimeToUnix(_from));
                 exportCommand.Parameters.AddWithValue("$dateUntil", DateTimeToUnix(_until));
-
-                var exportModel = new ExportModel();
+                
+                var historyCollection = new HistoryCollection();
 
                 using(var reader = exportCommand.ExecuteReader())
                 {
                     while(reader.Read())
                     {
+                        var date = DateTime.Parse(reader["date"].ToString());
                         var url = new Uri(reader["url"].ToString());
                         var title = reader["title"].ToString();
 
-                        exportModel.Add(new KeyValuePair<Uri, string>(url, title));
+                        historyCollection.Add(new History(url, title, date));
                     }
                 }
 
-                return exportModel;
+                return historyCollection;
             }
             else
             {
                 throw new FileNotFoundException($"DataBase {_pathToFile} not found!");  
             }
         }
+
+
 
         private long DateTimeToUnix(DateTime _datetime)
         {
