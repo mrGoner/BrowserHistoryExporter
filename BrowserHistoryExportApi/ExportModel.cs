@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace BrowserHistoryExportApi
 {
-    public class ExportModel
+    public class ExportModel : List<KeyValuePair<Uri, string>>
     {
-        public List<Uri> Urls { get; set; }
-        public List<string> Descriptions { get; set; }
+        
     }
 }
