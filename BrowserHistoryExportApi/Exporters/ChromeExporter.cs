@@ -24,8 +24,8 @@ namespace BrowserHistoryExportApi
                     $"select date, url, title from " +
                     "(select datetime(last_visit_time/1000000-11644473600,'unixepoch') 'date', " +
                     "url, title from urls) " +
-                    "where date > datetime($dateFrom, 'unixepoch') " +
-                    "and date > datetime($dateUntil, 'unixepoch') order by date";
+                    "where date >= datetime($dateFrom, 'unixepoch') " +
+                    "and date <= datetime($dateUntil, 'unixepoch') order by date";
                 
                 exportCommand.Parameters.AddWithValue("$dateFrom", DateTimeToUnix(_from));
                 exportCommand.Parameters.AddWithValue("$dateUntil", DateTimeToUnix(_until));

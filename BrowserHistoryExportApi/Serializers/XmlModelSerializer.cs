@@ -14,6 +14,8 @@ namespace BrowserHistoryExportApi.Serializers
             m_xmlSerializer = new XmlSerializer(typeof(HistoryCollection));
         }
 
+        public string Extention => "xml";
+
         public HistoryCollection Deserialize(string _data)
         {
             if (string.IsNullOrWhiteSpace(_data))

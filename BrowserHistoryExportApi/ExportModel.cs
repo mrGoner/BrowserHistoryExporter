@@ -22,5 +22,10 @@ namespace BrowserHistoryExportApi
             Url = _url;
             Title = _title;
         }
+
+        public History()
+        {
+            
+        }
     }
 }
