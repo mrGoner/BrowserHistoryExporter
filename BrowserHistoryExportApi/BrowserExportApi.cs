@@ -3,6 +3,7 @@ using System.Linq;
 using System;
 using BrowserHistoryExportApi.Serializers.Interfaces;
 using BrowserHistoryExportApi.Serializers;
+using System.IO;
 
 namespace BrowserHistoryExportApi
 {
@@ -52,19 +53,47 @@ namespace BrowserHistoryExportApi
             }
         }
 
-        public HistoryCollection Export(string _pathToHistory, 
+        public HistoryCollection Export(string _pathToHistory,
                                         string _exporterName, DateTime _from, DateTime _until)
         {
-            var exporter = m_currentExporters.FirstOrDefault(_x => _x.BrowserName == _exporterName);
-
-            if(exporter != null)
+            if (File.Exists(_pathToHistory))
             {
-                var historyCollection = exporter.Export(_pathToHistory, _from, _until);
+                var exporter = m_currentExporters.FirstOrDefault(_x => _x.BrowserName == _exporterName);
 
-                return historyCollection;
+                if (exporter != null)
+                {
+                    var historyCollection = exporter.Export(_pathToHistory, _from, _until);
+
+                    return historyCollection;
+                }
+
+                throw new InvalidOperationException($"Could not found exporter with name: {_exporterName}");
             }
+            else
+            {
+                throw new FileNotFoundException($"File {_pathToHistory} not found!");
+            }
+        }
 
-            throw new InvalidOperationException($"Could not found exporter with name: {_exporterName}");
+        public void SaveHistory(HistoryCollection _history, string _extention, string _pathToSave)
+        {
+            if (string.IsNullOrWhiteSpace(_extention))
+                throw new ArgumentNullException(nameof(_extention));
+            
+            if (_history == null)
+                throw new ArgumentNullException(nameof(_history));
+
+            var serializer = m_currentSerializers.FirstOrDefault(_x => _x.Extention == _extention);
+
+            if(serializer != null)
+            {
+                var data = serializer.Serialize(_history);
+                File.WriteAllText(_pathToSave, data);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Serializer for {_extention} not found!");   
+            }
         }
 
         public string[] GetSupportBrowsers()

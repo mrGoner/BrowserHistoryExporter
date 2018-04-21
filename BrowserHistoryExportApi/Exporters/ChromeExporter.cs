@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Data.Sqlite;
 using System.IO;
-using System.Collections.Generic;
 
 namespace BrowserHistoryExportApi
 {
@@ -13,46 +12,39 @@ namespace BrowserHistoryExportApi
 
         public HistoryCollection Export(string _pathToFile, DateTime _from, DateTime _until)
         {
-            if (File.Exists(_pathToFile))
+            var connection = new SqliteConnection($"DataSource = {_pathToFile}");
+
+            connection.Open();
+
+            var exportCommand = connection.CreateCommand();
+            exportCommand.CommandText =
+                $"select date, url, title from " +
+                "(select datetime(last_visit_time/1000000-11644473600,'unixepoch') 'date', " +
+                "url, title from urls) " +
+                "where date >= datetime($dateFrom, 'unixepoch') " +
+                "and date <= datetime($dateUntil, 'unixepoch') order by date";
+
+            exportCommand.Parameters.AddWithValue("$dateFrom", DateTimeToUnix(_from));
+            exportCommand.Parameters.AddWithValue("$dateUntil", DateTimeToUnix(_until));
+
+            var historyCollection = new HistoryCollection();
+
+            using (var reader = exportCommand.ExecuteReader())
             {
-                var connection = new SqliteConnection($"DataSource = {_pathToFile}");
-
-                connection.Open();
-
-                var exportCommand = connection.CreateCommand();
-                exportCommand.CommandText = 
-                    $"select date, url, title from " +
-                    "(select datetime(last_visit_time/1000000-11644473600,'unixepoch') 'date', " +
-                    "url, title from urls) " +
-                    "where date >= datetime($dateFrom, 'unixepoch') " +
-                    "and date <= datetime($dateUntil, 'unixepoch') order by date";
-                
-                exportCommand.Parameters.AddWithValue("$dateFrom", DateTimeToUnix(_from));
-                exportCommand.Parameters.AddWithValue("$dateUntil", DateTimeToUnix(_until));
-                
-                var historyCollection = new HistoryCollection();
-
-                using(var reader = exportCommand.ExecuteReader())
+                while (reader.Read())
                 {
-                    while(reader.Read())
-                    {
-                        var date = DateTime.Parse(reader["date"].ToString());
-                        var url = new Uri(reader["url"].ToString());
-                        var title = reader["title"].ToString();
+                    var date = DateTime.Parse(reader["date"].ToString());
+                    var url = reader["url"].ToString();
+                    var title = reader["title"].ToString();
 
-                        historyCollection.Add(new History(url, title, date));
-                    }
+                    historyCollection.Add(new History(url, title, date));
                 }
+            }
 
-                return historyCollection;
-            }
-            else
-            {
-                throw new FileNotFoundException($"DataBase {_pathToFile} not found!");  
-            }
+            connection.Close();
+
+            return historyCollection;
         }
-
-
 
         private long DateTimeToUnix(DateTime _datetime)
         {

@@ -43,6 +43,13 @@ namespace BrowserApiConsole
                 {
                     Console.WriteLine($"Date: {history.Date} Url: {history.Url} Title {history.Title}");
                 }
+
+                Console.WriteLine("Enter path to save:");
+
+                var savePath = Console.ReadLine();
+
+                api.SaveHistory(historyCollection, "xml", savePath);
+
             }
             catch(Exception ex)
             {
