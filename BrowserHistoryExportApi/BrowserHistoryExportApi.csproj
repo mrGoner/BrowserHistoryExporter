@@ -7,4 +7,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Serializers\" />
+    <Folder Include="Serializers\Interfaces\" />
+  </ItemGroup>
 </Project>
