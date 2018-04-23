@@ -105,5 +105,20 @@ namespace BrowserHistoryExportApi
         {
             return m_currentSerializers.Select(_x => _x.Extention).ToArray();
         }
+
+        public HistoryCollection LoadHistory(string _pathToFile)
+		{
+			if (!File.Exists(_pathToFile))
+				throw new FileNotFoundException($"File {_pathToFile} not found!");
+			         
+			string extention = Path.GetExtension(_pathToFile);
+
+			var currentSerrializer = m_currentSerializers.FirstOrDefault(_x => _x.Extention == extention);
+
+			if (currentSerrializer == null)
+				throw new InvalidOperationException($"Serializer for extention {extention} not found!");
+
+			return currentSerrializer.Deserialize(_pathToFile);
+		}
     }
 }
