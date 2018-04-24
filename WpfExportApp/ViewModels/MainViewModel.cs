@@ -54,16 +54,19 @@ namespace WpfExportApp.ViewModels
                 CheckPathExists = true
             };
 
-            openFileDlg.ShowDialog();
+            var chooseResult = openFileDlg.ShowDialog();
+
+            if (chooseResult.HasValue && chooseResult.Value)
+                LoadModel(openFileDlg.FileName);
         }
 
-        private async void LoadModel(string _path, DateTime _from, DateTime _until)
+        private async void LoadModel(string _path)
         {
             await Task.Factory.StartNew(() =>
             {
                 IsLoading = true;
-                //api load needed
-                m_historyModel = new HistoryViewModel();
+                var historyCollection = m_browserExportApi.LoadHistory(_path);
+                m_historyModel = new HistoryViewModel(historyCollection);
 
             }).ConfigureAwait(true);
 
@@ -77,11 +80,11 @@ namespace WpfExportApp.ViewModels
         {
             var extentions = m_browserExportApi.GetSupportExportExtentions();
 
-            string filter = string.Empty;
+            string filter = "Supported files | ";
 
             foreach(var extention in extentions)
             {
-                filter += $"*.{extention};";
+                filter += $"*{extention};";
             }
 
             return filter;

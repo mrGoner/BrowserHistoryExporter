@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:WpfExportApp.ViewModels"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:h="clr-namespace:BrowserHistoryExportApi;assembly=BrowserHistoryExportApi"
         mc:Ignorable="d"
         Title="Window1" Height="450" Width="800">
 
@@ -18,11 +20,35 @@
                         <MenuItem Header="Open Wizard"/>
                     </MenuItem>
                 </Menu>
+                <Grid Margin="0,20,0,0">
+                    <fa:ImageAwesome Name="LoadingIcon" Width="40" Height="40" Icon="Spinner" 
+                                     Spin="True" SpinDuration="4" Visibility="Collapsed" 
+                                     VerticalAlignment="Center"/>
+                    <ContentPresenter Content="{Binding HistoryModel}"/>
+                </Grid>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                    <Setter TargetName="LoadingIcon" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsLoading}" Value="false">
+                    <Setter TargetName="LoadingIcon" Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
 
         <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
-            
+            <ContentPresenter Content="{Binding CurrentHistory}"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type h:HistoryCollection}">
+            <ItemsControl ItemsSource="{Binding}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding Title}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </DataTemplate>
         
     </Window.Resources>

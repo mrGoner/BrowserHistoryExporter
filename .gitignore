@@ -8,4 +8,6 @@
 /.DS_Store
 /.vs/BrowserHistoryExportApi
 /BrowserApiConsole/obj
-/BrowserHistoryExportApi
+/BrowserHistoryExportApi/bin/Debug
+/BrowserHistoryExportApi/obj
+/packages/FontAwesome.WPF.4.7.0.9
