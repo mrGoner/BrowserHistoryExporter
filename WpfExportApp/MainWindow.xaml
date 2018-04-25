@@ -6,6 +6,7 @@
         xmlns:vm="clr-namespace:WpfExportApp.ViewModels"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:h="clr-namespace:BrowserHistoryExportApi;assembly=BrowserHistoryExportApi"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="Browsers History Viewer" Height="450" Width="800">
 
@@ -48,11 +49,16 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
                         <Label Content="Search"/>
-                        <TextBox Height="20" Margin="5,0,0,0" Width="300"></TextBox>
-                        <fa:ImageAwesome Icon="Search" Width="20" Height="20" Margin="5,0,0,0"/>
+                        <TextBox x:Name="SearchField" Height="20" Margin="5,0,0,0" Width="300"/>
+                        <Button Background="Transparent" Margin="5,0,0,0" Command="{Binding SearchCommand}" 
+                                CommandParameter="{Binding ElementName=SearchField, Path=Text}">
+                        <fa:ImageAwesome Icon="Search" Width="20" Height="20"/>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
-                <ListView ItemsSource="{Binding CurrentHistory}" Margin="0,65,0,0">
+                <ListView ItemsSource="{Binding CurrentHistoryCollection}"
+                          DataContext="{Binding}"
+                          Margin="0,65,0,0" SelectedItem="{Binding SelectedHistory}">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Url" DisplayMemberBinding="{Binding Url}" 
@@ -60,21 +66,32 @@
                             <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" 
                                             Width="{Binding ElementName=helperField, Path=ActualWidth}"/>
                             <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" 
-                                            Width="{Binding ElementName=helperField, Path=ActualWidth}"/>
+                                            Width="150"/>
                         </GridView>
                     </ListView.View>
                     <ListView.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy"/>
+                            <MenuItem Header="Copy" Command="{Binding CopyCommand}" />
+                            <!--Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                                AncestorType={x:Type ListView}}, Path=DataContext.CopyCommand}"/>-->
+                                
                             <MenuItem Header="Export"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction 
+                            Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                            AncestorType={x:Type ListView}}, Path=DataContext.OpenUrlCommand}">
+                            </i:InvokeCommandAction>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                 </ListView>
                 <Grid Visibility="Hidden">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="150"/>
                     </Grid.ColumnDefinitions>
                     <!--This is the hidden helper Field which is used to bind to, using the "Fill" column of the helper grid-->
                     <Grid Grid.Column="1" x:Name="helperField"/>
