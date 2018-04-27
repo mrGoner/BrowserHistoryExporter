@@ -50,15 +50,20 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
                         <Label Content="Search"/>
                         <TextBox x:Name="SearchField" Height="20" Margin="5,0,0,0" Width="300"/>
-                        <Button Background="Transparent" Margin="5,0,0,0" Command="{Binding SearchCommand}" 
+                        <Button x:Name="SearchButton" Background="Transparent" Margin="5,0,0,0" 
+                                Command="{Binding SearchCommand}" 
                                 CommandParameter="{Binding ElementName=SearchField, Path=Text}">
                         <fa:ImageAwesome Icon="Search" Width="20" Height="20"/>
                         </Button>
+                        <Button x:Name="ClearSearchButton" Background="Transparent" Margin="5,0,0,0" 
+                                Visibility="Collapsed" Command="{Binding ClearSearchResult}">
+                            <fa:ImageAwesome Icon="Times" Width="20" Height="20"/>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
-                <ListView ItemsSource="{Binding CurrentHistoryCollection}"
+                <ListView x:Name="HistoryView" ItemsSource="{Binding CurrentHistoryCollection}"
                           DataContext="{Binding}"
-                          Margin="0,65,0,0" SelectedItem="{Binding SelectedHistory}">
+                          Margin="0,65,0,0">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Url" DisplayMemberBinding="{Binding Url}" 
@@ -71,10 +76,7 @@
                     </ListView.View>
                     <ListView.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy" Command="{Binding CopyCommand}" />
-                            <!--Command="{Binding RelativeSource={RelativeSource FindAncestor, 
-                                AncestorType={x:Type ListView}}, Path=DataContext.CopyCommand}"/>-->
-                                
+                            <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
                             <MenuItem Header="Export"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
@@ -83,6 +85,12 @@
                             <i:InvokeCommandAction 
                             Command="{Binding RelativeSource={RelativeSource FindAncestor, 
                             AncestorType={x:Type ListView}}, Path=DataContext.OpenUrlCommand}">
+                            </i:InvokeCommandAction>
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, 
+                            AncestorType={x:Type ListView}}, Path=DataContext.SelectedChanged}" 
+                            CommandParameter="{Binding ElementName=HistoryView, Path=SelectedItems}">
                             </i:InvokeCommandAction>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
@@ -97,6 +105,15 @@
                     <Grid Grid.Column="1" x:Name="helperField"/>
                 </Grid>
             </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsSearched}" Value="true">
+                    <Setter TargetName="ClearSearchButton" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSearched}" Value="false">
+                    <Setter TargetName="ClearSearchButton" Property="Visibility" Value="Collapsed"/>
+                    <!--<Setter TargetName="SearchField" Property="Text" Value="{x:Null}"/>-->
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </Window.Resources>
     <ContentPresenter Content="{Binding}"/>

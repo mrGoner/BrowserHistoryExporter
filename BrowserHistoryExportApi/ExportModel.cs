@@ -4,9 +4,19 @@ using System.Collections.ObjectModel;
 namespace BrowserHistoryExportApi
 {
     [Serializable]
-    public class HistoryCollection : ObservableCollection<History>
+    public class HistoryCollection : ObservableCollection<History>, ICloneable
     {
-        
+        public object Clone()
+        {
+            var clonedObject = new HistoryCollection();
+
+            foreach(var item in this)
+            {
+                clonedObject.Add(new History(item.Url, item.Title, item.Date));
+            }
+
+            return clonedObject;
+        }
     }
 
     [Serializable]
