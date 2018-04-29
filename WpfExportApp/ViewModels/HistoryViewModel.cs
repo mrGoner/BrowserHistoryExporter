@@ -147,7 +147,6 @@ namespace WpfExportApp.ViewModels
 
             await Task.Factory.StartNew(() =>
             {
-                Thread.Sleep(5000);
                 var clonedHistory = (List<History>)m_historyCollection.Clone();
 
                 if (IsDateSearch)
