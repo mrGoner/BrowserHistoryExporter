@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Microsoft.Win32;
 using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace WpfExportApp.ViewModels
 {
@@ -62,9 +63,10 @@ namespace WpfExportApp.ViewModels
 
         private async void LoadModel(string _path)
         {
+            IsLoading = true;
+
             await Task.Factory.StartNew(() =>
             {
-                IsLoading = true;
                 var historyCollection = m_browserExportApi.LoadHistory(_path);
                 m_historyModel = new HistoryViewModel(historyCollection);
 

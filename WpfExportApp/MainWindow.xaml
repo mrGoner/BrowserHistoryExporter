@@ -22,9 +22,9 @@
                     </MenuItem>
                 </Menu>
                 <Grid Margin="0,20,0,0">
-                    <fa:ImageAwesome Name="LoadingIcon" Width="40" Height="40" Icon="Spinner" 
+                    <fa:ImageAwesome Name="LoadingIcon" Width="80" Height="80" Icon="Spinner" 
                                      Spin="True" SpinDuration="4" Visibility="Collapsed" 
-                                     VerticalAlignment="Center"/>
+                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <ContentPresenter Content="{Binding HistoryModel}"/>
                 </Grid>
             </Grid>
@@ -41,11 +41,16 @@
         <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
             <Grid Margin="0,5,0,0">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="From:"/>
-                        <DatePicker Margin="5,0,0,0" />
-                        <Label Content="Till:" Margin="35,0,0,0"/>
-                        <DatePicker Margin="5,0,0,0"/>
+                    <CheckBox Name="SearchChecker" Content="Учитывать дату" IsChecked="{Binding IsDateSearch}" 
+                              Margin="5,0,0,0" 
+                              HorizontalAlignment="Left"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Label Name="labelFrom" Content="From:" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                        <DatePicker Name="DatePickerFrom" Margin="5,0,0,0" 
+                                    SelectedDate="{Binding DateFrom}" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                        <Label Name="labelTill" Content="Till:" Margin="35,0,0,0" Visibility="Collapsed"/>
+                        <DatePicker Name="DatePickerTill" Margin="5,0,0,0" 
+                                    SelectedDate="{Binding DateTill}" Visibility="Collapsed" HorizontalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
                         <Label Content="Search"/>
@@ -53,7 +58,7 @@
                         <Button x:Name="SearchButton" Background="Transparent" Margin="5,0,0,0" 
                                 Command="{Binding SearchCommand}" 
                                 CommandParameter="{Binding ElementName=SearchField, Path=Text}">
-                        <fa:ImageAwesome Icon="Search" Width="20" Height="20"/>
+                            <fa:ImageAwesome Icon="Search" Width="20" Height="20"/>
                         </Button>
                         <Button x:Name="ClearSearchButton" Background="Transparent" Margin="5,0,0,0" 
                                 Visibility="Collapsed" Command="{Binding ClearSearchResult}">
@@ -61,9 +66,9 @@
                         </Button>
                     </StackPanel>
                 </StackPanel>
+
                 <ListView x:Name="HistoryView" ItemsSource="{Binding CurrentHistoryCollection}"
-                          DataContext="{Binding}"
-                          Margin="0,65,0,0">
+                          DataContext="{Binding}" Margin="0,65,0,0">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Url" DisplayMemberBinding="{Binding Url}" 
@@ -71,7 +76,7 @@
                             <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" 
                                             Width="{Binding ElementName=helperField, Path=ActualWidth}"/>
                             <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" 
-                                            Width="150"/>
+                                            Width="{Binding ElementName=helperFieldFixed, Path=ActualWidth}"/>
                         </GridView>
                     </ListView.View>
                     <ListView.ContextMenu>
@@ -103,15 +108,32 @@
                     </Grid.ColumnDefinitions>
                     <!--This is the hidden helper Field which is used to bind to, using the "Fill" column of the helper grid-->
                     <Grid Grid.Column="1" x:Name="helperField"/>
+                    <Grid Grid.Column="2" x:Name="helperFieldFixed"/>
                 </Grid>
+                <fa:ImageAwesome Name="HistoryViewLoading" Width="80" Height="80" Icon="Spinner" 
+                                     Spin="True" SpinDuration="4" Visibility="Collapsed" 
+                                     VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Grid>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsSearched}" Value="true">
                     <Setter TargetName="ClearSearchButton" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
+                
                 <DataTrigger Binding="{Binding IsSearched}" Value="false">
                     <Setter TargetName="ClearSearchButton" Property="Visibility" Value="Collapsed"/>
-                    <!--<Setter TargetName="SearchField" Property="Text" Value="{x:Null}"/>-->
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding IsLoading}" Value="true">
+                    <Setter TargetName="HistoryView" Property="IsEnabled" Value="false"/>
+                    <Setter TargetName="HistoryViewLoading" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+
+                <DataTrigger Binding="{Binding IsChecked, ElementName=SearchChecker}" Value="True">
+                    <Setter TargetName="labelFrom" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="DatePickerFrom" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="labelTill" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="DatePickerTill" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="HistoryView" Property="Margin" Value="0,90,0,0"/>
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>

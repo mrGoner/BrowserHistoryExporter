@@ -7,24 +7,31 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows;
 using System.Linq;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace WpfExportApp.ViewModels
 {
     public class HistoryViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        public HistoryCollection CurrentHistoryCollection { get; private set; }
+        public ObservableCollection<History> CurrentHistoryCollection { get; private set; }
         public IList<History> SelectedHistories { get; set; }
+        public object DateFrom { get; set; } = DateTime.Now;
+        public object DateTill { get; set; } = DateTime.Now;
+        public bool IsDateSearch { get; set; }
 
         private HistoryCollection m_historyCollection;
         private RelayCommand m_openUrlCommand;
-        private RelayCommand m_findHistoryCommand;
         private RelayCommand m_copyCommand;
         private RelayCommand m_searchCommand;
         private RelayCommand m_selectedChanged;
         private RelayCommand m_denySearch;
         private bool m_isSearched;
-
+        private bool m_isLoading;
+        
         public bool IsSearched
         {
             get
@@ -34,17 +41,38 @@ namespace WpfExportApp.ViewModels
             set
             {
                 if (m_isSearched != value)
+                {
                     m_isSearched = value;
+                    OnPropertyChanged(nameof(IsSearched));
+                }
+            }
+        }
 
-                OnPropertyChanged(nameof(IsSearched));
+        public bool IsLoading
+        {
+            get
+            {
+                return m_isLoading;
+            }
+            set
+            {
+                if (m_isLoading != value)
+                {
+                    m_isLoading = value;
+                    OnPropertyChanged(nameof(IsLoading));
+                }
             }
         }
 
         public HistoryViewModel(HistoryCollection _collection)
         {
+            if (_collection == null)
+                throw new ArgumentNullException(nameof(_collection));
+
             m_historyCollection = (HistoryCollection)_collection.Clone();
-            CurrentHistoryCollection = _collection ?? throw new ArgumentNullException(nameof(_collection));
+            CurrentHistoryCollection = new ObservableCollection<History>(_collection);
         }
+
 
         #region Commands
 
@@ -53,14 +81,6 @@ namespace WpfExportApp.ViewModels
             get
             {
                 return m_openUrlCommand ?? (m_openUrlCommand = new RelayCommand(_command => OpenUrl()));
-            }
-        }
-
-        public ICommand FindHistoryCommand
-        {
-            get
-            {
-                return m_findHistoryCommand ?? (m_findHistoryCommand = new RelayCommand(_command => { }));
             }
         }
 
@@ -118,22 +138,53 @@ namespace WpfExportApp.ViewModels
             //Many?
         }
 
-        private void SearchItems(string _text)
+        private async void SearchItems(string _text)
         {
-            var clonedHistory = (HistoryCollection)m_historyCollection.Clone();
-            var result = clonedHistory.Where(
-                _x => _x.Title.ToLower().Contains(_text.ToLower())).ToList();
+            if (string.IsNullOrWhiteSpace(_text) && !IsDateSearch)
+                return;
 
-            CurrentHistoryCollection.Clear();
+            IsLoading = true;
 
-            foreach(var item in result)
+            await Task.Factory.StartNew(() =>
             {
-                CurrentHistoryCollection.Add(item);
-            }
+                Thread.Sleep(5000);
+                var clonedHistory = (List<History>)m_historyCollection.Clone();
+
+                if (IsDateSearch)
+                {
+                    DateTime from;
+                    DateTime till;
+
+                    if (DateTime.TryParse(DateFrom?.ToString(), out var dateFrom))
+                        from = dateFrom;
+                    else
+                        from = DateTime.MinValue;
+
+                    if (DateTime.TryParse(DateTill?.ToString(), out var dateTill))
+                        till = dateTill;
+                    else
+                        till = DateTime.MaxValue;
+
+                    clonedHistory = clonedHistory.Where(_x => _x.Date >= from && _x.Date <= till).ToList();
+                }
+                var result = clonedHistory.Where(
+                         _x => _x.Title.ToLower().Contains(_text.ToLower())).ToList();
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentHistoryCollection.Clear();
+
+                    foreach (var item in result)
+                    {
+                        CurrentHistoryCollection.Add(item);
+                    }
+                });
+
+            }).ConfigureAwait(true);
 
             IsSearched = true;
-
-            //async maybe
+            IsLoading = false;
+            
             //improve search like case insensetive and more
         }
 
@@ -142,18 +193,27 @@ namespace WpfExportApp.ViewModels
             SelectedHistories = _list;
         }
 
-        private void DenySearch()
+        private async void DenySearch()
         {
-            var clonedHistory = (HistoryCollection)m_historyCollection.Clone();
+            IsLoading = true;
 
-            CurrentHistoryCollection.Clear();
-
-            foreach(var history in clonedHistory)
+            await Task.Factory.StartNew(() =>
             {
-                CurrentHistoryCollection.Add(history);
-            }
+                var clonedHistory = (HistoryCollection)m_historyCollection.Clone();
+
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CurrentHistoryCollection.Clear();
+
+                    foreach (var history in clonedHistory)
+                    {
+                        CurrentHistoryCollection.Add(history);
+                    }
+                });
+            }).ConfigureAwait(true);
+
             IsSearched = false;
-            //async maybe?
+            IsLoading = false;
         }
 
         public void OnPropertyChanged([CallerMemberName]string prop = "")

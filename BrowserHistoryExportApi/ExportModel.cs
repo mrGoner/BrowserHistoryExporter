@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace BrowserHistoryExportApi
 {
     [Serializable]
-    public class HistoryCollection : ObservableCollection<History>, ICloneable
+    public class HistoryCollection : List<History>, ICloneable
     {
         public object Clone()
         {
