@@ -9,8 +9,6 @@ using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using System.Threading;
 
 namespace WpfExportApp.ViewModels
 {
@@ -18,10 +16,12 @@ namespace WpfExportApp.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public ObservableCollection<History> CurrentHistoryCollection { get; private set; }
-        public IList<History> SelectedHistories { get; set; }
+        public List<History> SelectedHistories { get; set; }
         public object DateFrom { get; set; } = DateTime.Now;
         public object DateTill { get; set; } = DateTime.Now;
         public bool IsDateSearch { get; set; }
+        public delegate void ExportCommandHandler(List<History> _histories);
+        public event ExportCommandHandler OnExportCommandClicked;
 
         private HistoryCollection m_historyCollection;
         private RelayCommand m_openUrlCommand;
@@ -29,6 +29,7 @@ namespace WpfExportApp.ViewModels
         private RelayCommand m_searchCommand;
         private RelayCommand m_selectedChanged;
         private RelayCommand m_denySearch;
+        private RelayCommand m_exportCommand;
         private bool m_isSearched;
         private bool m_isLoading;
         
@@ -119,6 +120,16 @@ namespace WpfExportApp.ViewModels
             get
             {
                 return m_denySearch ?? (m_denySearch = new RelayCommand(_command => DenySearch()));
+            }
+        }
+
+        public ICommand ExportCommand
+        {
+            get
+            {
+                return m_exportCommand ?? 
+                    (m_exportCommand = 
+                    new RelayCommand(_command => OnExportCommandClicked?.Invoke(SelectedHistories)));
             }
         }
 

@@ -1,0 +1,64 @@
+﻿<Window x:Class="WpfExportApp.WizardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WpfExportApp.ViewModels"
+        xmlns:local="clr-namespace:WpfExportApp"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        mc:Ignorable="d"
+        Title="WizardWindow" Height="350" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:ConvertWizardViewModel}">
+            <Grid>
+                <StackPanel Margin="10,0,0,0" x:Name="MainStackPanel">
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <Label Content="Path to history"/>
+                        <TextBox
+                                 Text="{Binding SelectedPath, ValidatesOnNotifyDataErrors=True, Mode=TwoWay}" 
+                                 Width="450" Margin="5,0,0,0">
+                        </TextBox>
+                        <Button Content="..." Height="20" Width="20" Margin="5,0,0,0" 
+                                Command="{Binding OpenFileCommand}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <CheckBox x:Name="SelectDateChecker" Content="Select Date" 
+                                  IsChecked="{Binding IsDateSelected}"/>
+                        <DatePicker x:Name="DateFrom" Margin="15,0,0,0" 
+                                    SelectedDate="{Binding DateFrom}" Visibility="Collapsed"/>
+                        <DatePicker x:Name="DateTill" Margin="15,0,0,0" 
+                                    SelectedDate="{Binding DateTill}" Visibility="Collapsed"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Label Content="Select browser"/>
+                        <ComboBox ItemsSource="{Binding SupportBrowsers}" 
+                                  SelectedItem="{Binding SelectedBrowser, ValidatesOnDataErrors=True}"
+                                  MinWidth="100" Margin="5,0,0,0"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                        <Button x:Name="ConvertButton" Content="Convert!" Height="20" Width="60" 
+                                Command="{Binding ConvertCommand}" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+                <fa:ImageAwesome x:Name="ConvertingSpinner" Width="100" Height="100" 
+                                 Icon="Spinner" Spin="True" SpinDuration="4"
+                                 Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding ElementName=SelectDateChecker, Path=IsChecked}" Value="True">
+                    <Setter TargetName="DateFrom" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="DateTill" Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <!--<DataTrigger Binding="{Binding HasErrors}" Value="True">
+                    <Setter TargetName="ConvertButton" Property="IsEnabled" Value="False"/>
+                </DataTrigger>-->
+                <DataTrigger Binding="{Binding IsConvert}" Value="True">
+                    <Setter TargetName="ConvertingSpinner" Property="Visibility" Value="Visible"/>
+                    <Setter TargetName="MainStackPanel" Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+        </DataTemplate>
+    </Window.Resources>
+    <ContentPresenter Content="{Binding}"/>
+</Window>

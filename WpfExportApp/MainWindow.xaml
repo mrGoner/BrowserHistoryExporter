@@ -8,7 +8,7 @@
         xmlns:h="clr-namespace:BrowserHistoryExportApi;assembly=BrowserHistoryExportApi"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
-        Title="Browsers History Viewer" Height="450" Width="800">
+        Title="Browsers History Viewer" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:MainViewModel}">
@@ -18,7 +18,7 @@
                         <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
                     </MenuItem>
                     <MenuItem Header="Convert">
-                        <MenuItem Header="Open Wizard"/>
+                        <MenuItem Header="Open Wizard" Command="{Binding OpenWizardCommand}"/>
                     </MenuItem>
                 </Menu>
                 <Grid Margin="0,20,0,0">
@@ -41,7 +41,7 @@
         <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
             <Grid Margin="0,5,0,0">
                 <StackPanel>
-                    <CheckBox Name="SearchChecker" Content="Учитывать дату" IsChecked="{Binding IsDateSearch}" 
+                    <CheckBox Name="SearchChecker" Content="Select date" IsChecked="{Binding IsDateSearch}" 
                               Margin="5,0,0,0" 
                               HorizontalAlignment="Left"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -87,7 +87,7 @@
                     <ListView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                            <MenuItem Header="Export"/>
+                            <MenuItem Header="Export" Command="{Binding ExportCommand}"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                     <i:Interaction.Triggers>
