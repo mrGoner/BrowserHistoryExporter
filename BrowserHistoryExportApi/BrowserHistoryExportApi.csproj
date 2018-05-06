@@ -19,7 +19,6 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.1.0-preview2-final" />    
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Serializers\" />
     <Folder Include="Serializers\Interfaces\" />
     <Folder Include="Exporters\" />
   </ItemGroup>

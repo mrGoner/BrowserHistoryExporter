@@ -137,21 +137,34 @@ namespace WpfExportApp.ViewModels
 
             var convertedHistory = await Task<HistoryCollection>.Factory.StartNew(() => 
             {
-                var dateFrom = DateTime.MinValue;
-                var dateTill = DateTime.MaxValue;
-
-                if (IsDateSelected)
+                try
                 {
-                    if (DateTime.TryParse(DateFrom?.ToString(), out var from))
-                        dateFrom = from;
-                    if (DateTime.TryParse(DateTill?.ToString(), out var till))
-                        dateTill = till;
-                }
+                    var dateFrom = DateTime.MinValue;
+                    var dateTill = DateTime.MaxValue;
 
-                return  m_exportApi.Export(SelectedPath, SelectedBrowser, dateFrom, dateTill);
+                    if (IsDateSelected)
+                    {
+                        if (DateTime.TryParse(DateFrom?.ToString(), out var from))
+                            dateFrom = from;
+                        if (DateTime.TryParse(DateTill?.ToString(), out var till))
+                            dateTill = till;
+                    }
+
+                    return m_exportApi.Export(SelectedPath, SelectedBrowser, dateFrom, dateTill);
+                }
+                catch
+                {
+                    return null;
+                }
             });
 
             IsConvert = false;
+
+            if(convertedHistory == null)
+            {
+                MessageBox.Show("Error was occured!");
+                return;
+            }
 
             var saveResult = MessageBox.Show($"Successfully converted {convertedHistory.Count} histories. Save?", 
                 "Operation completed", MessageBoxButton.YesNo);

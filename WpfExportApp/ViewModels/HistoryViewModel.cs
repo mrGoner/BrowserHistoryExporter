@@ -137,10 +137,16 @@ namespace WpfExportApp.ViewModels
 
         private void OpenUrl()
         {
-            if (SelectedHistories != null)
-                Process.Start(SelectedHistories.First().Url);
-
-            //Class not registered exception!
+            try
+            {
+                if (SelectedHistories != null)
+                    Process.Start(SelectedHistories.First().Url);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Can not open url, reason: {ex.Message}", "Error!", 
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CopyToClipboard()
@@ -177,6 +183,7 @@ namespace WpfExportApp.ViewModels
 
                     clonedHistory = clonedHistory.Where(_x => _x.Date >= from && _x.Date <= till).ToList();
                 }
+
                 var result = clonedHistory.Where(
                          _x => _x.Title.ToLower().Contains(_text.ToLower())).ToList();
 

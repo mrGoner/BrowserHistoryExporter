@@ -77,25 +77,33 @@ namespace WpfExportApp.ViewModels
 
         private void OpenWizard()
         {
-            var wizardVm = new ConvertWizardViewModel(m_browserExportApi);
-
-            var wizardWindow = new WizardWindow
+            try
             {
-                DataContext = wizardVm
-            };
+                var wizardVm = new ConvertWizardViewModel(m_browserExportApi);
 
-            wizardVm.LoadHistoryEvent += (HistoryCollection _history) =>
-            {
-                if (_history != null)
+                var wizardWindow = new WizardWindow
                 {
-                    wizardWindow.Close();
-                    LoadModel(_history);
-                }
-            };
+                    DataContext = wizardVm
+                };
 
-            wizardVm.SaveHistoryEvent += M_historyModel_OnExportCommandClicked;
+                wizardVm.LoadHistoryEvent += (HistoryCollection _history) =>
+                {
+                    if (_history != null)
+                    {
+                        wizardWindow.Close();
+                        LoadModel(_history);
+                    }
+                };
 
-            wizardWindow.ShowDialog();
+                wizardVm.SaveHistoryEvent += M_historyModel_OnExportCommandClicked;
+
+                wizardWindow.ShowDialog();
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Error occured in wizard with message: {ex.Message}", "Error!",
+                         MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private async void LoadModel(string _path)
@@ -104,9 +112,17 @@ namespace WpfExportApp.ViewModels
 
             await Task.Factory.StartNew(() =>
             {
-                var historyCollection = m_browserExportApi.LoadHistory(_path);
-                m_historyModel = new HistoryViewModel(historyCollection);
-                m_historyModel.OnExportCommandClicked += M_historyModel_OnExportCommandClicked;
+                try
+                {
+                    var historyCollection = m_browserExportApi.LoadHistory(_path);
+                    m_historyModel = new HistoryViewModel(historyCollection);
+                    m_historyModel.OnExportCommandClicked += M_historyModel_OnExportCommandClicked;
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show($"Error while open history with message: {ex.Message}", "Error!",
+                          MessageBoxButton.OK, MessageBoxImage.Error);
+                }
 
             }).ConfigureAwait(true);
 
