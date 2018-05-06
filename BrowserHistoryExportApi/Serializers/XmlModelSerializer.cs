@@ -5,7 +5,7 @@ using System.IO;
 
 namespace BrowserHistoryExportApi.Serializers
 {
-    public class XmlModelSerializer : IModelSerializer
+    internal class XmlModelSerializer : IModelSerializer
     {
         private XmlSerializer m_xmlSerializer;
 

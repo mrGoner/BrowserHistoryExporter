@@ -21,7 +21,8 @@ namespace BrowserHistoryExportApi
 
             m_currentSerializers = new List<IModelSerializer>
             {
-                new XmlModelSerializer()
+                new XmlModelSerializer(),
+                new JsonModelSerializer()
             };
         }
 
