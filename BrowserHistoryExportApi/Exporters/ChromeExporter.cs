@@ -13,7 +13,9 @@ namespace BrowserHistoryExportApi
         public HistoryCollection Export(string _pathToFile, DateTime _from, DateTime _until)
         {
             var connection = new SqliteConnection($"DataSource = {_pathToFile}");
-
+#if NETFULL
+            SQLitePCL.Batteries.Init();
+#endif
             connection.Open();
 
             var exportCommand = connection.CreateCommand();

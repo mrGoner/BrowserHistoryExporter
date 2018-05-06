@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -13,24 +12,25 @@ using Microsoft.Win32;
 
 namespace WpfExportApp.ViewModels
 {
-    public class ConvertWizardViewModel : INotifyDataErrorInfo, INotifyPropertyChanged
+    public class ConvertWizardViewModel : IDataErrorInfo, INotifyPropertyChanged
     {
         public List<string> SupportBrowsers { get; }
         public string SelectedBrowser { get; set; }
-
-        public string SelectedPath
-        {
-            get => m_selectedPath;
-            set
-            {
-                m_selectedPath = value;
-                OnPropertyChanged(nameof(SelectedPath));
-            }
-        }
-
         public object DateFrom { get; set; }
         public object DateTill { get; set; }
         public bool IsDateSelected { get; set; }
+        public delegate void SaveHistoryCollection(HistoryCollection _histories);
+        public delegate void HistoryLoadHandler(HistoryCollection _collection);
+        public event HistoryLoadHandler LoadHistoryEvent;
+        public event SaveHistoryCollection SaveHistoryEvent;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private BrowserExportApi m_exportApi;
+        private string m_selectedPath;
+        private RelayCommand m_convertCommand;
+        private bool m_isConvert;
+        private RelayCommand m_openFileCommand;
+        private bool m_modelValid;
 
         public bool IsConvert
         {
@@ -45,22 +45,18 @@ namespace WpfExportApp.ViewModels
             }
         }
 
-        public delegate void ExportHandler();
-        public event ExportHandler ExportEvent;
-        public delegate void HistoryLoadHandler(ExportEventArgs _args);
-        public event HistoryLoadHandler LoadHistoryEvent;
-        public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private BrowserExportApi m_exportApi;
-        private string m_selectedPath;
-        private RelayCommand m_convertCommand;
-        private bool m_isConvert;
-        private RelayCommand m_openFileCommand;
+        public string SelectedPath
+        {
+            get => m_selectedPath;
+            set
+            {
+                m_selectedPath = value;
+                OnPropertyChanged(nameof(SelectedPath));
+            }
+        }
 
         public ConvertWizardViewModel(BrowserExportApi _exportApi)
         {
-
             m_exportApi = _exportApi ?? throw new ArgumentNullException(nameof(_exportApi));
             SupportBrowsers = _exportApi.GetSupportBrowsers().ToList();
         }
@@ -97,7 +93,43 @@ namespace WpfExportApp.ViewModels
                 SelectedPath = fileDlg.FileName;
         }
 
-        public bool HasErrors => !File.Exists(m_selectedPath) || SelectedBrowser == null;
+        public bool ModelValid
+        {
+            get => m_modelValid;
+            set
+            {
+                if(m_modelValid != value)
+                {
+                    m_modelValid = value;
+                    OnPropertyChanged(nameof(ModelValid));
+                }
+            }
+        }
+
+        public string Error => throw new NotImplementedException();
+
+        public string this[string columnName]
+        {
+            get
+            {
+                string error = string.Empty;
+                switch (columnName)
+                {
+                    case "SelectedPath":
+                        if (!File.Exists(m_selectedPath))
+                            error ="Choose a valid path!";
+                        break;
+                    case "SelectedBrowser":
+                        if (SelectedBrowser == null)
+                            error ="Browser not select!";
+                        break;
+                }
+
+                ModelValid = !File.Exists(m_selectedPath) || SelectedBrowser == null;
+
+                return error;
+            }
+        }
 
         private async void Convert()
         {
@@ -119,43 +151,24 @@ namespace WpfExportApp.ViewModels
                 return  m_exportApi.Export(SelectedPath, SelectedBrowser, dateFrom, dateTill);
             });
 
-            MessageBox.Show($"Successfully converted {convertedHistory.Count} histories");
-        }
+            IsConvert = false;
 
-        public IEnumerable GetErrors(string propertyName)
-        {
-            var errors = new List<string>();
+            var saveResult = MessageBox.Show($"Successfully converted {convertedHistory.Count} histories. Save?", 
+                "Operation completed", MessageBoxButton.YesNo);
 
-            switch (propertyName)
-            {
-                case "SelectedPath":
-                    if (!File.Exists(m_selectedPath))
-                        errors.Add("Choose a valid path!");
-                    break;
-                case "SelectedBrowser":
-                    if (SelectedBrowser == null)
-                        errors.Add("Browser not select!");
-                    break;
-            }
+            if (saveResult == MessageBoxResult.Yes)
+                SaveHistoryEvent?.Invoke(convertedHistory);
 
-            return errors;
+            var openResult = MessageBox.Show("Open converted histories in the histrory view?", 
+                "Question", MessageBoxButton.YesNo);
+
+            if (openResult == MessageBoxResult.Yes)
+                LoadHistoryEvent?.Invoke(convertedHistory);
         }
 
         public void OnPropertyChanged([CallerMemberName]string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-        }
-    }
-
-    public class ExportEventArgs : EventArgs
-    {
-        public string BrowserName { get; }
-        public string PathToFile { get; }
-
-        public ExportEventArgs(string _pathToFile, string _browserName)
-        {
-            BrowserName = _browserName;
-            PathToFile = _pathToFile;
         }
     }
 }

@@ -19,13 +19,16 @@ namespace WpfExportApp.ViewModels
         private ICommand m_openCommand;
         private ICommand m_wizardCommand;
         private string m_loadFilter;
+        private string m_saveFilter;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public MainViewModel()
         {
             m_browserExportApi = new BrowserExportApi();
-            m_loadFilter = BuildSaveFilter();
+            var extentions = m_browserExportApi.GetSupportExportExtentions();
+            m_loadFilter = FilterBuilder.BuildLoadFilter(extentions);
+            m_saveFilter = FilterBuilder.BuildSaveFilter(extentions);
         }
 
         public bool IsLoading
@@ -75,10 +78,22 @@ namespace WpfExportApp.ViewModels
         private void OpenWizard()
         {
             var wizardVm = new ConvertWizardViewModel(m_browserExportApi);
+
             var wizardWindow = new WizardWindow
             {
                 DataContext = wizardVm
             };
+
+            wizardVm.LoadHistoryEvent += (HistoryCollection _history) =>
+            {
+                if (_history != null)
+                {
+                    wizardWindow.Close();
+                    LoadModel(_history);
+                }
+            };
+
+            wizardVm.SaveHistoryEvent += M_historyModel_OnExportCommandClicked;
 
             wizardWindow.ShowDialog();
         }
@@ -101,13 +116,30 @@ namespace WpfExportApp.ViewModels
                 OnPropertyChanged(nameof(HistoryModel));
         }
 
-        private void M_historyModel_OnExportCommandClicked(IList<History> _histories)
+        private async void LoadModel(HistoryCollection _historyCollection)
+        {
+            IsLoading = true;
+
+            await Task.Factory.StartNew(() =>
+            {
+                m_historyModel = new HistoryViewModel(_historyCollection);
+                m_historyModel.OnExportCommandClicked += M_historyModel_OnExportCommandClicked;
+
+            }).ConfigureAwait(true);
+
+            IsLoading = false;
+
+            if (m_historyModel != null)
+                OnPropertyChanged(nameof(HistoryModel));
+        }
+
+        private void M_historyModel_OnExportCommandClicked(List<History> _histories)
         {
             if(_histories != null)
             {
                 var saveFileDlg = new SaveFileDialog
                 {
-                    Filter = m_loadFilter,
+                    Filter = m_saveFilter,
                     InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
                 };
 
@@ -120,40 +152,9 @@ namespace WpfExportApp.ViewModels
                     m_browserExportApi.SaveHistory(exportHistory,
                         Path.GetExtension(saveFileDlg.FileName), saveFileDlg.FileName);
 
-                    MessageBox.Show("Успешно сохранено!");
+                    MessageBox.Show("Saved!");
                 }
             }
-        }
-
-        private string BuildLoadFilter()
-        {
-            var extentions = m_browserExportApi.GetSupportExportExtentions();
-
-            string filter = "Supported files | ";
-
-            foreach(var extention in extentions)
-            {
-                filter += $"*{extention};";
-            }
-
-            return filter;
-        }
-
-        private string BuildSaveFilter()
-        {
-            var extentions = m_browserExportApi.GetSupportExportExtentions();
-
-            string filter = string.Empty;
-
-            foreach(var extention in extentions)
-            {
-                filter += $"({extention})|*{extention}|";
-            }
-
-            if (filter.EndsWith("|"))
-               filter = filter.Remove(filter.LastIndexOf("|"), 1);
-
-            return filter;
         }
 
         public void OnPropertyChanged([CallerMemberName]string prop = "")

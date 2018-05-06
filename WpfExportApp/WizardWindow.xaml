@@ -14,10 +14,10 @@
             <Grid>
                 <StackPanel Margin="10,0,0,0" x:Name="MainStackPanel">
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Label Content="Path to history"/>
+                        <Label Content="Path to history" Width="80"/>
                         <TextBox
-                                 Text="{Binding SelectedPath, ValidatesOnNotifyDataErrors=True, Mode=TwoWay}" 
-                                 Width="450" Margin="5,0,0,0">
+                                 Text="{Binding SelectedPath, ValidatesOnDataErrors=True, Mode=TwoWay}"
+                                 Width="450" Margin="5,0,0,0" IsReadOnly="True">
                         </TextBox>
                         <Button Content="..." Height="20" Width="20" Margin="5,0,0,0" 
                                 Command="{Binding OpenFileCommand}"/>
@@ -50,9 +50,9 @@
                     <Setter TargetName="DateFrom" Property="Visibility" Value="Visible"/>
                     <Setter TargetName="DateTill" Property="Visibility" Value="Visible"/>
                 </DataTrigger>
-                <!--<DataTrigger Binding="{Binding HasErrors}" Value="True">
+                <DataTrigger Binding="{Binding ModelValid}" Value="True">
                     <Setter TargetName="ConvertButton" Property="IsEnabled" Value="False"/>
-                </DataTrigger>-->
+                </DataTrigger>
                 <DataTrigger Binding="{Binding IsConvert}" Value="True">
                     <Setter TargetName="ConvertingSpinner" Property="Visibility" Value="Visible"/>
                     <Setter TargetName="MainStackPanel" Property="IsEnabled" Value="False"/>
