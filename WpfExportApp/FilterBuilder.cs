@@ -1,4 +1,7 @@
-﻿namespace WpfExportApp
+﻿using System;
+using WpfExportApp.Properties;
+
+namespace WpfExportApp
 {
     public class FilterBuilder
     {
@@ -7,7 +10,7 @@
             if (_extentions == null)
                 throw new System.ArgumentNullException(nameof(_extentions));
 
-            string filter = "Supported files | ";
+            string filter = Resources.SupportedFiles;
 
             foreach (var extention in _extentions)
             {
@@ -30,7 +33,7 @@
             }
 
             if (filter.EndsWith("|"))
-                filter = filter.Remove(filter.LastIndexOf("|"), 1);
+                filter = filter.Remove(filter.LastIndexOf("|", StringComparison.Ordinal), 1);
 
             return filter;
         }

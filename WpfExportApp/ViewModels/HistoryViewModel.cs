@@ -9,6 +9,7 @@ using System.Windows;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using WpfExportApp.Properties;
 
 namespace WpfExportApp.ViewModels
 {
@@ -144,7 +145,7 @@ namespace WpfExportApp.ViewModels
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Can not open url, reason: {ex.Message}", "Error!", 
+                MessageBox.Show(string.Format(Resources.ErrorUrlOpen, ex.Message), Resources.ErrorTitle, 
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

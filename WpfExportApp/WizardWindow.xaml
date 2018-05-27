@@ -7,6 +7,7 @@
         xmlns:local="clr-namespace:WpfExportApp"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:Properties="clr-namespace:WpfExportApp.Properties"
         mc:Ignorable="d"
         Title="WizardWindow" Height="200" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -14,7 +15,7 @@
             <Grid>
                 <StackPanel Margin="10,0,0,0" x:Name="MainStackPanel">
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Label Content="Path to history" Width="80"/>
+                        <Label Content="{x:Static Properties:Resources.ViewPathToHistory}" MinWidth="80"/>
                         <TextBox
                                  Text="{Binding SelectedPath, ValidatesOnDataErrors=True, Mode=TwoWay}"
                                  Width="450" Margin="5,0,0,0" IsReadOnly="True">
@@ -23,7 +24,7 @@
                                 Command="{Binding OpenFileCommand}"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <CheckBox x:Name="SelectDateChecker" Content="Select Date" 
+                        <CheckBox x:Name="SelectDateChecker" Content="{x:Static Properties:Resources.ViewSelectDate}" 
                                   IsChecked="{Binding IsDateSelected}"/>
                         <DatePicker x:Name="DateFrom" Margin="15,0,0,0" 
                                     SelectedDate="{Binding DateFrom}" Visibility="Collapsed"/>
@@ -31,13 +32,13 @@
                                     SelectedDate="{Binding DateTill}" Visibility="Collapsed"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                        <Label Content="Select browser"/>
+                        <Label Content="{x:Static Properties:Resources.ViewSelectBrowser}"/>
                         <ComboBox ItemsSource="{Binding SupportBrowsers}" 
                                   SelectedItem="{Binding SelectedBrowser, ValidatesOnDataErrors=True}"
                                   MinWidth="100" Margin="5,0,0,0"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
-                        <Button x:Name="ConvertButton" Content="Convert!" Height="30" Width="80" 
+                        <Button x:Name="ConvertButton" Content="{x:Static Properties:Resources.ViewConvert}" Height="30" MinWidth="80" 
                                 Command="{Binding ConvertCommand}" Margin="0,10,0,0"/>
                     </StackPanel>
                 </StackPanel>

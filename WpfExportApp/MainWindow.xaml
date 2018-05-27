@@ -73,6 +73,10 @@
                             <fa:ImageAwesome Icon="Times" Width="20" Height="20"/>
                         </Button>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <Label Content="{x:Static res:Resources.ViewCurrentCountOfHistory}"/>
+                        <Label Content="{Binding CurrentHistoryCollection.Count}"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <ListView x:Name="HistoryView" ItemsSource="{Binding CurrentHistoryCollection}"

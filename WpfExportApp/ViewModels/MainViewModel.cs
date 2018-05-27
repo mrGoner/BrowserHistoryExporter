@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using WpfExportApp.Properties;
 
 namespace WpfExportApp.ViewModels
 {
@@ -86,7 +87,7 @@ namespace WpfExportApp.ViewModels
                     DataContext = wizardVm
                 };
 
-                wizardVm.LoadHistoryEvent += (HistoryCollection _history) =>
+                wizardVm.LoadHistoryEvent += _history =>
                 {
                     if (_history != null)
                     {
@@ -101,7 +102,7 @@ namespace WpfExportApp.ViewModels
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"Error occured in wizard with message: {ex.Message}", "Error!",
+                MessageBox.Show(string.Format(Resources.WizardError, ex.Message), Resources.ErrorTitle,
                          MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -120,7 +121,7 @@ namespace WpfExportApp.ViewModels
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show($"Error while open history with message: {ex.Message}", "Error!",
+                    MessageBox.Show(string.Format(Resources.ErrorOpenHistory, ex.Message), Resources.ErrorTitle,
                           MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
@@ -168,7 +169,7 @@ namespace WpfExportApp.ViewModels
                     m_browserExportApi.SaveHistory(exportHistory,
                         Path.GetExtension(saveFileDlg.FileName), saveFileDlg.FileName);
 
-                    MessageBox.Show("Saved!");
+                    MessageBox.Show(Resources.SavedTitle);
                 }
             }
         }

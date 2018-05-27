@@ -210,4 +210,7 @@
   <data name="ViewSelectDate" xml:space="preserve">
     <value>Диапазон</value>
   </data>
+  <data name="ViewCurrentCountOfHistory" xml:space="preserve">
+    <value>Count of history: </value>
+  </data>
 </root>

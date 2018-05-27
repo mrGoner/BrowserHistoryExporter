@@ -228,4 +228,8 @@
     <value>Конвертировать</value>
     <comment>Конвертировать</comment>
   </data>
+  <data name="ViewCurrentCountOfHistory" xml:space="preserve">
+    <value>Текущее количество историй: </value>
+    <comment>Текущее количество историй: </comment>
+  </data>
 </root>

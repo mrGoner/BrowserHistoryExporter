@@ -304,6 +304,15 @@ namespace WpfExportApp.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Count of history: .
+        /// </summary>
+        public static string ViewCurrentCountOfHistory {
+            get {
+                return ResourceManager.GetString("ViewCurrentCountOfHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Path to history.
         /// </summary>
         public static string ViewPathToHistory {
@@ -322,7 +331,7 @@ namespace WpfExportApp.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Select Date.
+        ///   Ищет локализованную строку, похожую на Диапазон.
         /// </summary>
         public static string ViewSelectDate {
             get {
