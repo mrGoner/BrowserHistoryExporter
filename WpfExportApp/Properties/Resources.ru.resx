@@ -118,96 +118,114 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Convert" xml:space="preserve">
-    <value>Convert</value>
+    <value>Конвертация</value>
   </data>
   <data name="Copy" xml:space="preserve">
-    <value>Copy</value>
+    <value>Копировать</value>
   </data>
   <data name="Date" xml:space="preserve">
-    <value>Date</value>
+    <value>Дата</value>
   </data>
   <data name="Export" xml:space="preserve">
-    <value>Export</value>
+    <value>Экспортировать</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>File</value>
+    <value>Файл</value>
   </data>
   <data name="From" xml:space="preserve">
-    <value>From</value>
+    <value>С:</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
-    <value>Open</value>
+    <value>Открыть</value>
   </data>
   <data name="OpenWizardTitle" xml:space="preserve">
-    <value>Open convert wizard</value>
+    <value>Помощник конвертации</value>
   </data>
   <data name="Search" xml:space="preserve">
-    <value>Search</value>
+    <value>Поиск</value>
   </data>
   <data name="SelectDate" xml:space="preserve">
-    <value>Select date</value>
+    <value>Диапазон</value>
+  </data>
+  <data name="Supported" xml:space="preserve">
+    <value>Поддерживаемы</value>
   </data>
   <data name="Till" xml:space="preserve">
-    <value>Till</value>
+    <value>По:</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Search query</value>
+    <value>Запрос</value>
   </data>
   <data name="SavedTitle" xml:space="preserve">
-    <value>Saved!</value>
+    <value>Сохранено!</value>
+    <comment>Сохранено!</comment>
   </data>
   <data name="ErrorOpenHistory" xml:space="preserve">
-    <value>Error while open history with message: {0}</value>
+    <value>Ошибка при открытии истории: {0}</value>
+    <comment>Ошибка при открытии истории: {0}</comment>
   </data>
   <data name="ErrorTitle" xml:space="preserve">
-    <value>Error!</value>
+    <value>Ошибка!</value>
+    <comment>Ошибка!</comment>
   </data>
   <data name="WizardError" xml:space="preserve">
-    <value>Error occured in wizard with message: {0}</value>
+    <value>Ошибка мастера конвертации: {0}</value>
+    <comment>Ошибка мастера конвертации: {0}</comment>
   </data>
   <data name="ErrorUrlOpen" xml:space="preserve">
-    <value>Can not open url, reason: {0}</value>
+    <value>Не удалось открыть url: {0}</value>
+    <comment>Не удалось открыть url: {0}</comment>
   </data>
   <data name="ConvertWizardOpenConverted" xml:space="preserve">
-    <value>Open converted histories in the histrory view?</value>
+    <value>Открыть сконвертированную историю?</value>
+    <comment>Открыть сконвертированную историю?</comment>
   </data>
   <data name="QuestionTitle" xml:space="preserve">
-    <value>Question</value>
+    <value>Вопрос</value>
+    <comment>Вопрос</comment>
   </data>
   <data name="SuccessfullyConvertedQuestion" xml:space="preserve">
-    <value>Successfully converted {0} histories. Save?</value>
+    <value>Успешно сконвертировано {0} историй. Сохранить?</value>
+    <comment>Успешно сконвертировано {0} историй. Сохранить?</comment>
   </data>
   <data name="OperationComplete" xml:space="preserve">
-    <value>Operation completed</value>
+    <value>Выполнено</value>
+    <comment>Выполнено</comment>
   </data>
   <data name="ErrorOccured" xml:space="preserve">
-    <value>Error was occured!</value>
+    <value>Произошла ошибка!</value>
+    <comment>Произошла ошибка!</comment>
   </data>
   <data name="ErrorOccuredWithParams" xml:space="preserve">
-    <value>Error was occured! {0}</value>
+    <value>Произошла ошибка! {0}</value>
+    <comment>Произошла ошибка! {0}</comment>
   </data>
   <data name="InvalidPath" xml:space="preserve">
-    <value>Choose a valid path!</value>
+    <value>Путь не выбран!</value>
+    <comment>Путь не выбран!</comment>
   </data>
   <data name="BrowserNotSelected" xml:space="preserve">
-    <value>Browser not selected!</value>
+    <value>Не выбран браузер!</value>
+    <comment>Не выбран браузер!</comment>
   </data>
   <data name="AllFilesMask" xml:space="preserve">
-    <value>(All Files) | *.*</value>
+    <value>(Все файлы) | *.*</value>
+    <comment>(Все файлы) | *.*</comment>
   </data>
   <data name="ViewSelectBrowser" xml:space="preserve">
-    <value>Select browser</value>
+    <value>Выберите браузер</value>
+    <comment>Браузер</comment>
   </data>
   <data name="ViewPathToHistory" xml:space="preserve">
-    <value>Path to history</value>
+    <value>Путь до истории</value>
+    <comment>Путь до истории</comment>
   </data>
   <data name="SupportedFiles" xml:space="preserve">
-    <value>Supported files | </value>
+    <value>Поддерживаемые файлы |</value>
+    <comment>Поддерживаемые файлы |</comment>
   </data>
   <data name="ViewConvert" xml:space="preserve">
-    <value>Convert</value>
-  </data>
-  <data name="ViewSelectDate" xml:space="preserve">
-    <value>Диапазон</value>
+    <value>Конвертировать</value>
+    <comment>Конвертировать</comment>
   </data>
 </root>

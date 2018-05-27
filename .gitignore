@@ -13,3 +13,5 @@
 /packages/FontAwesome.WPF.4.7.0.9
 /packages/System.Windows.Interactivity.WPF.2.0.20525
 /packages/System.ValueTuple.4.4.0
+/BrowserApiConsole/bin/Release/netcoreapp2.0
+/BrowserHistoryExportApi/bin/Release

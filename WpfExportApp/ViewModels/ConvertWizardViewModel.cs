@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using BrowserHistoryExportApi;
 using Microsoft.Win32;
+using WpfExportApp.Properties;
 
 namespace WpfExportApp.ViewModels
 {
@@ -81,7 +82,7 @@ namespace WpfExportApp.ViewModels
         {
             var fileDlg = new OpenFileDialog
             {
-                Filter = "(All Files) | *.*",
+                Filter = Resources.AllFilesMask,
                 InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
                 CheckFileExists = true,
                 Multiselect = false
@@ -117,11 +118,11 @@ namespace WpfExportApp.ViewModels
                 {
                     case "SelectedPath":
                         if (!File.Exists(m_selectedPath))
-                            error ="Choose a valid path!";
+                            error = Resources.InvalidPath;
                         break;
                     case "SelectedBrowser":
                         if (SelectedBrowser == null)
-                            error ="Browser not select!";
+                            error = Resources.BrowserNotSelected;
                         break;
                 }
 
@@ -152,8 +153,9 @@ namespace WpfExportApp.ViewModels
 
                     return m_exportApi.Export(SelectedPath, SelectedBrowser, dateFrom, dateTill);
                 }
-                catch
+                catch(Exception ex)
                 {
+                    MessageBox.Show(string.Format(Resources.ErrorOccuredWithParams, ex.Message));
                     return null;
                 }
             });
@@ -162,18 +164,19 @@ namespace WpfExportApp.ViewModels
 
             if(convertedHistory == null)
             {
-                MessageBox.Show("Error was occured!");
+                MessageBox.Show(Resources.ErrorOccured);
                 return;
             }
 
-            var saveResult = MessageBox.Show($"Successfully converted {convertedHistory.Count} histories. Save?", 
-                "Operation completed", MessageBoxButton.YesNo);
+            var saveResult = MessageBox.Show(string.Format(Resources.SuccessfullyConvertedQuestion, 
+                    convertedHistory.Count), 
+                Resources.OperationComplete, MessageBoxButton.YesNo);
 
             if (saveResult == MessageBoxResult.Yes)
                 SaveHistoryEvent?.Invoke(convertedHistory);
 
-            var openResult = MessageBox.Show("Open converted histories in the histrory view?", 
-                "Question", MessageBoxButton.YesNo);
+            var openResult = MessageBox.Show(Resources.ConvertWizardOpenConverted, 
+                Resources.QuestionTitle, MessageBoxButton.YesNo);
 
             if (openResult == MessageBoxResult.Yes)
                 LoadHistoryEvent?.Invoke(convertedHistory);

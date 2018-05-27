@@ -7,6 +7,7 @@
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         xmlns:h="clr-namespace:BrowserHistoryExportApi;assembly=BrowserHistoryExportApi"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:res="clr-namespace:WpfExportApp.Properties"
         mc:Ignorable="d"
         Title="Browsers History Viewer" Height="450" Width="800" WindowStartupLocation="CenterScreen">
 
@@ -14,11 +15,11 @@
         <DataTemplate DataType="{x:Type vm:MainViewModel}">
             <Grid>
                 <Menu Height="20" VerticalAlignment="Top">
-                    <MenuItem Header="File">
-                        <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+                    <MenuItem Header="{x:Static res:Resources.File}">
+                        <MenuItem Header="{x:Static res:Resources.OpenFile}" Command="{Binding OpenCommand}"/>
                     </MenuItem>
-                    <MenuItem Header="Convert">
-                        <MenuItem Header="Open Wizard" Command="{Binding OpenWizardCommand}"/>
+                    <MenuItem Header="{x:Static res:Resources.Convert}">
+                        <MenuItem Header="{x:Static res:Resources.OpenWizardTitle}" Command="{Binding OpenWizardCommand}"/>
                     </MenuItem>
                 </Menu>
                 <Grid Margin="0,20,0,0">
@@ -41,23 +42,25 @@
         <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
             <Grid Margin="0,5,0,0">
                 <StackPanel>
-                    <CheckBox Name="SearchChecker" Content="Select date" IsChecked="{Binding IsDateSearch}" 
+                    <CheckBox Name="SearchChecker" Content="{x:Static res:Resources.SelectDate}" IsChecked="{Binding IsDateSearch}" 
                               Margin="5,0,0,0" 
                               HorizontalAlignment="Left"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Label Name="labelFrom" Content="From:" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                        <Label Name="labelFrom" Content="{x:Static res:Resources.From}" Visibility="Collapsed" HorizontalAlignment="Center"/>
                         <DatePicker Name="DatePickerFrom" Margin="5,0,0,0" 
                                     SelectedDate="{Binding DateFrom}" Visibility="Collapsed" HorizontalAlignment="Center"/>
-                        <Label Name="labelTill" Content="Till:" Margin="35,0,0,0" Visibility="Collapsed"/>
+                        <Label Name="labelTill" Content="{x:Static res:Resources.Till}" Margin="35,0,0,0" Visibility="Collapsed"/>
                         <DatePicker Name="DatePickerTill" Margin="5,0,0,0" 
-                                    SelectedDate="{Binding DateTill}" Visibility="Collapsed" HorizontalAlignment="Center"/>
+                                    SelectedDate="{Binding DateTill}" Visibility="Collapsed" 
+                                    HorizontalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
-                        <Label Content="Search"/>
+                        <Label Content="{x:Static res:Resources.Search}"/>
                         <TextBox x:Name="SearchField" Height="20" Margin="5,0,0,0" Width="300">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Enter" Command="{Binding SearchCommand}" 
-                                CommandParameter="{Binding Path=Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBox}}}"/>
+                                CommandParameter="{Binding Path=Text, 
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TextBox}}}"/>
                             </TextBox.InputBindings>
                         </TextBox>
                         <Button x:Name="SearchButton" Background="Transparent" Margin="5,0,0,0" 
@@ -78,16 +81,16 @@
                         <GridView>
                             <GridViewColumn Header="Url" DisplayMemberBinding="{Binding Url}" 
                                             Width="{Binding ElementName=helperField, Path=ActualWidth}"/>
-                            <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" 
+                            <GridViewColumn Header="{x:Static res:Resources.Title}" DisplayMemberBinding="{Binding Title}" 
                                             Width="{Binding ElementName=helperField, Path=ActualWidth}"/>
-                            <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" 
+                            <GridViewColumn Header="{x:Static res:Resources.Date}" DisplayMemberBinding="{Binding Date}" 
                                             Width="{Binding ElementName=helperFieldFixed, Path=ActualWidth}"/>
                         </GridView>
                     </ListView.View>
                     <ListView.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Header="Copy" Command="{Binding CopyCommand}"/>
-                            <MenuItem Header="Export" Command="{Binding ExportCommand}"/>
+                            <MenuItem Header="{x:Static res:Resources.Copy}" Command="{Binding CopyCommand}"/>
+                            <MenuItem Header="{x:Static res:Resources.Export}" Command="{Binding ExportCommand}"/>
                         </ContextMenu>
                     </ListView.ContextMenu>
                     <i:Interaction.Triggers>
